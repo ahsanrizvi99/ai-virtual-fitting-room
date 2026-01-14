@@ -18,8 +18,8 @@
 ## 👨‍🔬 Authors
 
 - **Ahsan Rizvi**
+- **Umme Hani Roshni**
 - **Sirajum Munira**
-- **Umme Hani Roshni** 
 - **Md. Irtiza Hossain Mahmud**
   
 Department of Electrical and Computer Engineering, North South University
@@ -30,51 +30,17 @@ Department of Electrical and Computer Engineering, North South University
 
 The system implements a **Proxy-Tunnel Microservices Pattern** to bypass local hardware limitations, enabling heavy GAN inference to run securely on a remote GPU while maintaining a responsive local frontend.
 
-```mermaid
-graph TD
-    subgraph Client_Layer [Client Side]
-        User((User)) -->|1. Selects Model & Cloth| React[React Frontend<br/>(localhost:3000)]
-        React -->|2. Multipart Image Upload| Proxy[FastAPI Proxy Server<br/>(localhost:8000)]
-    end
-
-    subgraph Tunneling_Layer [Security & Networking]
-        Proxy -->|3. Forward Request| Ngrok_Client[Ngrok Secure Tunnel]
-        Ngrok_Client <==>|4. Encrypted Stream| Ngrok_Cloud((Ngrok Cloud))
-    end
-
-    subgraph Cloud_Layer [Inference Node - Google Colab]
-        Ngrok_Cloud <==>|5. Ingress Traffic| Colab_Server[Colab GPU Runtime]
-        
-        Colab_Server -->|6. Orchestrate| Inference[Inference Script (test.py)]
-        
-        subgraph VITON_HD_Pipeline [PyTorch GAN Pipeline]
-            Inference --> Seg[SegGenerator<br/>(Body Parsing)]
-            Inference --> GMM[GMM<br/>(Geometric Warping)]
-            Inference --> ALIAS[ALIASGenerator<br/>(Texture Synthesis)]
-        end
-    end
-
-    ALIAS -->|7. Return Synthesized Image| Colab_Server
-    Colab_Server -->|8. Stream Response| React
-    
-    style Client_Layer fill:#e3f2fd,stroke:#2196f3,stroke-width:2px
-    style Cloud_Layer fill:#fbe9e7,stroke:#ff5722,stroke-width:2px
-    style VITON_HD_Pipeline fill:#fff3e0,stroke:#ff9800,stroke-dasharray: 5 5
-
-```
+![System Architecture Diagram](./system_diagram.png)
 
 ### Data Flow Lifecycle
-
-1. **Client Layer (React):** The user selects a model and cloth. The app retrieves metadata from `metadata.json` and posts a `Multipart/Form-Data` request to the Local Proxy.
-2. **Gateway Layer (FastAPI):** A lightweight local server (`localhost:8000`) acts as a traffic controller. It sanitizes the input and forwards the binary payload via **HTTPX** to the Cloud Node.
-3. **Tunneling Layer (Ngrok):** A secure, encrypted tunnel exposes the isolated Cloud Localhost to the public internet, allowing the Local Proxy to communicate with the Colab instance.
-4. **Inference Layer (Google Colab):**
-* **Ingestion:** Receives images and updates the test pairs list.
-* **Segmentation:** `SegGenerator` predicts the human body parsing map.
-* **Warping:** `GMM` (Geometric Matching Module) applies Thin-Plate Spline transformations to align the cloth with the pose.
-* **Synthesis:** `ALIASGenerator` fuses the warped cloth with the person, applying misalignment-aware normalization to fix texture artifacts.
-
-
+1.  **Client Layer (React):** The user selects a model and cloth. The app retrieves metadata from `metadata.json` and posts a `Multipart/Form-Data` request to the Local Proxy.
+2.  **Gateway Layer (FastAPI):** A lightweight local server (`localhost:8000`) acts as a traffic controller. It sanitizes the input and forwards the binary payload via **HTTPX** to the Cloud Node.
+3.  **Tunneling Layer (Ngrok):** A secure, encrypted tunnel exposes the isolated Cloud Localhost to the public internet, allowing the Local Proxy to communicate with the Colab instance.
+4.  **Inference Layer (Google Colab):**
+    * **Ingestion:** Receives images and updates the test pairs list.
+    * **Segmentation:** `SegGenerator` predicts the human body parsing map.
+    * **Warping:** `GMM` (Geometric Matching Module) applies Thin-Plate Spline transformations to align the cloth with the pose.
+    * **Synthesis:** `ALIASGenerator` fuses the warped cloth with the person, applying misalignment-aware normalization to fix texture artifacts.
 
 ---
 
@@ -176,9 +142,5 @@ This repository is released under the **CC BY-NC 4.0** (Creative Commons Attribu
 1. **Attribution:** You must give appropriate credit to **Ahsan Rizvi** for the full-stack implementation and the **VITON-HD Authors** for the core model architecture.
 2. **Non-Commercial:** You may **not** use this material for commercial purposes.
 
-> **Citation (for this repository):**
-> Rizvi, A. (2025). *VirtualFIT: A Hybrid-Cloud Virtual Try-On Platform*. GitHub Repository. https://www.google.com/search?q=https://github.com/YOUR_USERNAME/VirtualFIT
-
-```
-
-```
+> *Citation (for this repository):*
+> **Rizvi, A. (2025). *VirtualFIT: A Hybrid-Cloud Virtual Try-On Platform*. GitHub Repository.**
