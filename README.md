@@ -1,3 +1,4 @@
+
 # 👔 VirtualFIT: Full-Stack AI Virtual Try-On Platform
 
 **A production-ready implementation of High-Resolution Virtual Try-On (VITON-HD) featuring a React frontend, distributed Hybrid-Cloud architecture, and automated computer vision pipelines.**
@@ -5,7 +6,7 @@
 [![React](https://img.shields.io/badge/Frontend-React_18-61DAFB?logo=react&logoColor=black)](./frontend)
 [![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688?logo=fastapi&logoColor=white)](./backend_proxy)
 [![PyTorch](https://img.shields.io/badge/Core_AI-PyTorch_GAN-EE4C2C?logo=pytorch&logoColor=white)](./colab_runtime)
-[![Architecture](https://img.shields.io/badge/Infrastructure-Hybrid_Cloud-blue)](./colab_runtime)
+[![Infrastructure](https://img.shields.io/badge/Infrastructure-Hybrid_Cloud-blue)](./colab_runtime)
 [![Documentation](https://img.shields.io/badge/Report-Read_Project_PDF-B31B1B?logo=adobeacrobatreader&logoColor=white)](./Project_Report.pdf)
 
 > **The Problem:** State-of-the-art virtual try-on models require massive GPUs (VRAM > 12GB), making them inaccessible for standard web applications.
@@ -16,9 +17,9 @@
 
 ## 👨‍🔬 Authors
 
-- **Ahsan Rizvi**  
-- **Umme Hani Roshni**
-- **Sirajum Munira** 
+- **Ahsan Rizvi**
+- **Sirajum Munira**
+- **Umme Hani Roshni** 
 - **Md. Irtiza Hossain Mahmud**
   
 Department of Electrical and Computer Engineering, North South University
@@ -27,9 +28,7 @@ Department of Electrical and Computer Engineering, North South University
 
 ## 🏗️ System Architecture
 
-The system implements a **Proxy-Tunnel Microservices Pattern** to bypass local hardware limitations.
-
-![System Architecture Diagram](./system_diagram.png)
+The system implements a **Proxy-Tunnel Microservices Pattern** to bypass local hardware limitations, enabling heavy GAN inference to run securely on a remote GPU while maintaining a responsive local frontend.
 
 ```mermaid
 graph TD
@@ -66,16 +65,16 @@ graph TD
 
 ### Data Flow Lifecycle
 
-1. **Client Layer (React):** The user captures a photo or selects a model. The app serializes the state to `localStorage` and posts a `Multipart/Form-Data` request to the Local Proxy.
-2. **Proxy Layer (FastAPI):** The local server receives the binary payload, validates file types, and forwards the request via **HTTPX** through the secure tunnel.
-3. **Inference Layer (Colab GPU):**
-* **Ingestion:** The cloud node receives images and triggers the `subprocess`.
+1. **Client Layer (React):** The user selects a model and cloth. The app retrieves metadata from `metadata.json` and posts a `Multipart/Form-Data` request to the Local Proxy.
+2. **Gateway Layer (FastAPI):** A lightweight local server (`localhost:8000`) acts as a traffic controller. It sanitizes the input and forwards the binary payload via **HTTPX** to the Cloud Node.
+3. **Tunneling Layer (Ngrok):** A secure, encrypted tunnel exposes the isolated Cloud Localhost to the public internet, allowing the Local Proxy to communicate with the Colab instance.
+4. **Inference Layer (Google Colab):**
+* **Ingestion:** Receives images and updates the test pairs list.
 * **Segmentation:** `SegGenerator` predicts the human body parsing map.
 * **Warping:** `GMM` (Geometric Matching Module) applies Thin-Plate Spline transformations to align the cloth with the pose.
-* **Synthesis:** `ALIASGenerator` fuses the warped cloth with the person using misalignment-aware normalization.
+* **Synthesis:** `ALIASGenerator` fuses the warped cloth with the person, applying misalignment-aware normalization to fix texture artifacts.
 
 
-4. **Response:** The synthesized image is streamed back through the tunnel to the client for rendering.
 
 ---
 
@@ -168,12 +167,18 @@ While the core GAN model and inference logic are derived from VITON-HD, the **Fu
 This repository is released under the **CC BY-NC 4.0** (Creative Commons Attribution-NonCommercial 4.0) license to align with the original VITON-HD distribution terms.
 
 **You are free to:**
+
 * **Share** — copy and redistribute the material in any medium or format.
 * **Adapt** — remix, transform, and build upon the material.
 
 **Under the following terms:**
-1.  **Attribution:** You must give appropriate credit to **Ahsan Rizvi** for the full-stack implementation and the **VITON-HD Authors** for the core model architecture.
-2.  **Non-Commercial:** You may **not** use this material for commercial purposes (e.g., selling a paid service).
+
+1. **Attribution:** You must give appropriate credit to **Ahsan Rizvi** for the full-stack implementation and the **VITON-HD Authors** for the core model architecture.
+2. **Non-Commercial:** You may **not** use this material for commercial purposes.
 
 > **Citation (for this repository):**
-> **Rizvi, A. (2025). *VirtualFIT: A Hybrid-Cloud Virtual Try-On Platform*. GitHub Repository.**
+> Rizvi, A. (2025). *VirtualFIT: A Hybrid-Cloud Virtual Try-On Platform*. GitHub Repository. https://www.google.com/search?q=https://github.com/YOUR_USERNAME/VirtualFIT
+
+```
+
+```
