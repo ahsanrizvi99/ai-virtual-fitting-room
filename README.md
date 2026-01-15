@@ -9,6 +9,9 @@
 [![Infrastructure](https://img.shields.io/badge/Infrastructure-Hybrid_Cloud-blue)](./colab_runtime)
 [![Documentation](https://img.shields.io/badge/Report-Read_Project_PDF-B31B1B?logo=adobeacrobatreader&logoColor=white)](./Project_Report.pdf)
 
+![VirtualFIT Homepage](./Homepage.png)
+*Figure: VirtualFIT homepage showing the virtual try-on user interface and catalog selection workflow.*
+
 > **The Problem:** State-of-the-art virtual try-on models require massive GPUs (VRAM > 12GB), making them inaccessible for standard web applications.
 >
 > **The Solution:** VirtualFIT implements a **Proxy-Tunnel Architecture** that decouples the UI from the inference engine. It allows a lightweight React client to control a remote Tesla T4 GPU node, delivering photorealistic 1024x768 try-on results in <4 seconds.
